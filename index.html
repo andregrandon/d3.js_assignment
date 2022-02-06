@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<meta charset="utf-8">
+<meta name="description" content="Developed By Andre Grandon">
+
+<!-- Load d3.js -->
+<script src="https://d3js.org/d3.v6.js"></script>
+<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+
+<!-- Create a div where the graph will take place -->
+<div id="mydata"></div>
+<button type="button" class="btn btn-warning" style="position:absolute; left:540px; top:225px;"
+onclick="Remove()">Remove Lower Students</button>
+<button class="btn btn-primary" style="position:absolute; left:540px; top:180px;"
+type="button" onclick="Add()">All Students</button>
+<h1 style="position:absolute; left:240px;top:390px;
+font-size:1.3em;">Marks</h1>
+<h1 style="font-size:1.4em; transform:
+rotate(-90deg); position:absolute; left:12px; top:180px "> Student</h1>
+
+<script>
+
+
+// set the dimensions and margins of the graph
+var margin = {top: 20, right: 30, bottom: 40, left: 90},
+    width = 460 - margin.left - margin.right,
+    height = 400 - margin.top - margin.bottom;
+
+// append the svg object to the body of the page
+var svg = d3.select("#mydata")
+  .append("svg")
+    .attr("width", 500)
+    .attr("height", 500)
+  .append("g")
+    .attr("transform",
+          "translate(" + margin.left + "," + margin.top + ")");
+
+var data = [{Student: 1, marks: 6}, { Student: 2, marks: 100}, { Student: 3, marks: 90},
+                  { Student: 4, marks: 55}, { Student: 5, marks: 83}, { Student: 6, marks: 88},
+                  { Student: 7, marks: 91}, { Student: 8, marks: 92}, { Student: 9, marks: 67},
+                  { Student: 10, marks: 73}]
+
+
+
+  data = data.sort(function(a,b) {
+      return d3.ascending(a.marks, b.marks); })
+
+  function Remove(){
+        svg.selectAll("rect")
+            .data([1,2,3])
+            .remove()
+            }
+
+    function Add(){
+      svg.selectAll("myRect")
+        .data(data)
+        .join("rect")
+        .attr("x", x(0) )
+        .attr("y", d => y(d.Student))
+        .attr("width", d=> x(d.marks))
+        .attr("height", y.bandwidth() )
+        .attr("fill", "#69b3a2")
+              }
+
+  // Add X axis
+  var x = d3.scaleLinear()
+    .domain([0, 100])
+    .range([ 0, width]);
+  svg.append("g")
+    .attr("transform", `translate(0, ${height})`)
+    .call(d3.axisBottom(x))
+    .selectAll("text")
+      .attr("transform", "translate(3,0)rotate(-0)")
+      .style("text-anchor", "end");
+
+
+  // Y axis
+  var y = d3.scaleBand()
+    .range([ 0, height ])
+    .domain(data.map(d => d.Student))
+    .padding(.1);
+  svg.append("g")
+    .call(d3.axisLeft(y))
+
+  //Bars
+  svg.selectAll("myRect")
+    .data(data)
+    .join("rect")
+    .attr("x", x(0) )
+    .attr("y", d => y(d.Student))
+    .attr("width", d=> x(d.marks))
+    .attr("height", y.bandwidth() )
+    .attr("fill", "#69b3a2")
+
+
+  </script>
